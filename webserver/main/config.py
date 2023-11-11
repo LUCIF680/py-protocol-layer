@@ -26,7 +26,7 @@ class Config:
     JWT_QUERY_STRING_NAME = "token"
     # Set the secret key to sign the JWTs with
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-    DOMAIN = "nic2004:52110"
+    DOMAIN = "ONDC:RET10"
     CITY_CODE = "std:080"
     COUNTRY_CODE = "IND"
     BAP_TTL = "20"
@@ -35,13 +35,15 @@ class Config:
     BAP_PUBLIC_KEY = os.getenv("BAP_PUBLIC_KEY", "some-key")
     BAP_ID = os.getenv("BAP_ID", "buyer-app.ondc.org")
     BAP_UNIQUE_KEY_ID = os.getenv("BAP_UNIQUE_KEY_ID", "207")
-    REGISTRY_BASE_URL = "https://staging.registry.ondc.org"
-    TTL_IN_SECONDS = int(os.getenv("TTL_IN_SECONDS", "3600"))
+    REGISTRY_BASE_URL = "https://staging.gateway.proteantech.in"
+    TTL_IN_SECONDS = int(os.getenv("TTL_IN_SECONDS", "18000"))
     VERIFICATION_ENABLE = os.getenv("VERIFICATION_ENABLE", "True") == "True"
     RABBITMQ_QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "bpp_protocol")
     RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
     QUEUE_ENABLE = os.getenv("QUEUE_ENABLE", "False") == "True"
     API_TOKEN = os.getenv("API_TOKEN", "testing_random_123")
+    MAX_CONSUME_MESSAGE_TIME = int(os.getenv("MAX_CONSUME_MESSAGE_TIME", "30"))
+    CONSUMER_MAX_WORKERS = int(os.getenv("CONSUMER_MAX_WORKERS", "100"))
 
 
 class DevelopmentConfig(Config):
@@ -94,12 +96,14 @@ class PreProductionConfig(Config):
     MONGO_DATABASE_HOST = os.getenv("MONGO_DATABASE_HOST", "mongo")
     MONGO_DATABASE_PORT = int(os.getenv("MONGO_DATABASE_PORT", 27017))
     MONGO_DATABASE_NAME = os.getenv("MONGO_DATABASE_NAME", "sandbox_bap")
-    CLIENT_WEBHOOK_ENDPOINT = os.getenv("CLIENT_WEBHOOK_ENDPOINT", "http://localhost:3001/clientApis/response")
+    CLIENT_WEBHOOK_ENDPOINT = os.getenv(
+        "CLIENT_WEBHOOK_ENDPOINT", "http://localhost:3001/clientApis/response")
     REGISTRY_BASE_URL = "https://preprod.registry.ondc.org/ondc"
     BAP_PRIVATE_KEY = os.getenv("BAP_PRIVATE_KEY", "some_key")
     BAP_PUBLIC_KEY = os.getenv("BAP_PUBLIC_KEY", "some_key")
     BAP_ID = os.getenv("BAP_ID", "buyer-app-preprod.ondc.org")
-    BAP_UNIQUE_KEY_ID = os.getenv("BAP_UNIQUE_KEY_ID", "96c81878-f327-457e-8835-5b35bb20f099")
+    BAP_UNIQUE_KEY_ID = os.getenv(
+        "BAP_UNIQUE_KEY_ID", "96c81878-f327-457e-8835-5b35bb20f099")
 
 
 config_by_name = dict(
@@ -116,7 +120,8 @@ def get_config_by_name(config_name, default=None, env_param_name=None):
     config_env = os.getenv(env_param_name or "ENV")
     config_value = default
     if config_env:
-        config_value = getattr(config_by_name[config_env](), config_name, default)
+        config_value = getattr(
+            config_by_name[config_env](), config_name, default)
     return config_value
 
 
